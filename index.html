@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Lettres pour l'été</title>
+<style>
+  :root{
+    --cream:#f6efe1;
+    --paper:#fffdf6;
+    --ink:#3a3226;
+    --ink-soft:#7a6f5c;
+    --sun:#e8a33d;
+    --sun-deep:#d5822a;
+    --sky:#8fb8c9;
+    --rose:#d98a7b;
+    --line:#e7dcc5;
+    --shadow:rgba(90,70,40,.25);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:"Georgia","Times New Roman",serif;
+    color:var(--ink);
+    background:
+      radial-gradient(120% 90% at 50% -10%, #ffe9b8 0%, transparent 55%),
+      linear-gradient(160deg,#fbf3df 0%, #f3e6c8 100%);
+    min-height:100%;
+    overflow-x:hidden;
+  }
+  .screen{display:none;min-height:100vh;padding:24px 18px 40px;animation:fade .4s ease;}
+  .screen.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  h1{font-size:2rem;margin:0;letter-spacing:.5px;}
+  .subtitle{color:var(--ink-soft);font-style:italic;margin-top:6px;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+
+  /* ---------- ACCUEIL ---------- */
+  .home-wrap{max-width:440px;margin:0 auto;text-align:center;padding-top:8vh;}
+  .stamp{font-size:3.4rem;line-height:1;filter:drop-shadow(0 4px 6px var(--shadow));}
+  .home-card{
+    margin-top:26px;background:var(--paper);border-radius:18px;padding:26px 22px;
+    box-shadow:0 12px 30px var(--shadow);border:1px solid var(--line);
+  }
+  .home-card p{color:var(--ink-soft);margin:0 0 16px;}
+  input[type=password],input[type=text]{
+    font-family:inherit;font-size:1.1rem;text-align:center;letter-spacing:3px;
+    width:100%;padding:14px;border:1px solid var(--line);border-radius:12px;
+    background:#fffef9;color:var(--ink);outline:none;
+  }
+  input:focus{border-color:var(--sun);}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    background:linear-gradient(160deg,var(--sun),var(--sun-deep));color:#fff;
+    font-size:1.05rem;padding:14px 22px;border-radius:12px;width:100%;margin-top:14px;
+    box-shadow:0 6px 16px rgba(213,130,42,.4);transition:transform .1s;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn.ghost{background:transparent;color:var(--ink-soft);box-shadow:none;border:1px solid var(--line);}
+  .error{color:var(--rose);min-height:20px;margin-top:10px;font-size:.9rem;font-style:italic;}
+
+  /* ---------- BOÎTE ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:720px;margin:0 auto 18px;}
+  .topbar .who{font-style:italic;color:var(--ink-soft);font-size:.9rem;}
+  .link{background:none;color:var(--sun-deep);font-size:.9rem;text-decoration:underline;padding:6px;}
+  .box-wrap{max-width:720px;margin:0 auto;}
+  .pile{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;margin-top:20px;}
+  .empty{text-align:center;color:var(--ink-soft);font-style:italic;margin-top:40px;line-height:1.6;}
+  .envelope{
+    position:relative;aspect-ratio:3/2;border-radius:10px;padding:14px;cursor:pointer;
+    background:linear-gradient(160deg,#fbf1d8,#f0dfb8);border:1px solid #e3d0a3;
+    box-shadow:0 6px 14px var(--shadow);transition:transform .15s, box-shadow .15s;
+    display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;
+  }
+  .envelope:active{transform:translateY(-3px) rotate(-1deg);box-shadow:0 10px 20px var(--shadow);}
+  .envelope::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:52%;
+    background:linear-gradient(160deg,#f7e8c4,#ecd7a6);
+    clip-path:polygon(0 0,100% 0,50% 100%);opacity:.9;border-bottom:1px solid #e3d0a3;
+  }
+  .envelope .seal{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);font-size:1.4rem;z-index:2;}
+  .envelope .env-date{position:relative;z-index:2;font-size:.72rem;color:var(--ink-soft);}
+  .envelope .env-title{position:relative;z-index:2;font-weight:bold;font-size:.95rem;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .fab{
+    position:fixed;right:20px;bottom:22px;z-index:20;
+    background:linear-gradient(160deg,var(--sun),var(--sun-deep));color:#fff;
+    border-radius:30px;padding:16px 22px;font-size:1rem;
+    box-shadow:0 8px 22px rgba(213,130,42,.5);display:flex;align-items:center;gap:8px;
+  }
+
+  /* ---------- ÉDITEUR ---------- */
+  .editor-top{display:flex;align-items:center;justify-content:space-between;max-width:640px;margin:0 auto 14px;gap:10px;}
+  .sheet-wrap{max-width:640px;margin:0 auto;}
+  .sheet{
+    position:relative;background:var(--paper);border-radius:6px;padding:22px;
+    box-shadow:0 10px 28px var(--shadow);
+    background-image:repeating-linear-gradient(transparent,transparent 31px,#eee4cd 32px);
+    min-height:340px;
+  }
+  .sheet textarea{
+    width:100%;min-height:300px;border:none;outline:none;background:transparent;resize:vertical;
+    font-family:inherit;font-size:1.05rem;line-height:32px;color:var(--ink);
+  }
+  #drawCanvas{position:absolute;inset:22px 22px auto 22px;touch-action:none;border-radius:4px;display:none;}
+  .sheet.drawing #drawCanvas{display:block;}
+  .sheet.drawing textarea{pointer-events:none;opacity:.5;}
+
+  .tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;}
+  .tool{
+    background:#fffef9;border:1px solid var(--line);border-radius:20px;padding:9px 15px;
+    font-size:.92rem;color:var(--ink);display:flex;align-items:center;gap:6px;
+  }
+  .tool.on{background:var(--sun);color:#fff;border-color:var(--sun);}
+
+  .photos-strip{display:flex;flex-wrap:wrap;gap:14px;margin-top:18px;justify-content:center;}
+  .polaroid{
+    background:#fff;padding:8px 8px 26px;border-radius:3px;box-shadow:0 6px 14px var(--shadow);
+    transform:rotate(var(--r,-2deg));position:relative;width:130px;
+  }
+  .polaroid img{width:100%;height:110px;object-fit:cover;display:block;background:#eee;filter:sepia(.18) contrast(1.03);}
+  .polaroid .cap{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:.7rem;color:var(--ink-soft);font-style:italic;}
+  .polaroid .del{position:absolute;top:-8px;right:-8px;background:var(--rose);color:#fff;border-radius:50%;
+    width:22px;height:22px;font-size:.85rem;line-height:22px;text-align:center;box-shadow:0 2px 6px var(--shadow);}
+
+  /* ---------- LECTURE ---------- */
+  .reader-wrap{max-width:640px;margin:0 auto;}
+  .read-text{white-space:pre-wrap;line-height:32px;font-size:1.05rem;
+    background-image:repeating-linear-gradient(transparent,transparent 31px,#eee4cd 32px);
+    background-attachment:local;min-height:60px;}
+  .read-draw{width:100%;margin-top:10px;border-radius:6px;}
+  .muted{color:var(--ink-soft);font-size:.85rem;font-style:italic;}
+  .hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<!-- ================= ACCUEIL ================= -->
+<section id="screen-home" class="screen active">
+  <div class="home-wrap">
+    <div class="stamp">✉️🌞</div>
+    <h1>Lettres pour l'été</h1>
+    <div class="subtitle">Un coin tranquille pour écrire</div>
+    <div class="home-card">
+      <p>Entre ton code secret pour ouvrir ta boîte à lettres.</p>
+      <input id="codeInput" type="password" inputmode="text" placeholder="• • • •" autocomplete="off" />
+      <div class="error" id="codeError"></div>
+      <button class="btn" id="enterBtn">Ouvrir ma boîte</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BOÎTE ================= -->
+<section id="screen-box" class="screen">
+  <div class="topbar">
+    <div>
+      <h1 style="font-size:1.5rem;">Ma boîte</h1>
+      <div class="who" id="boxWho"></div>
+    </div>
+    <button class="link" id="logoutBtn">Fermer</button>
+  </div>
+  <div class="box-wrap">
+    <div id="pile" class="pile"></div>
+    <div id="emptyBox" class="empty hidden">
+      Ta boîte est vide pour l'instant.<br>Touche le bouton pour écrire ta première lettre ✍️
+    </div>
+  </div>
+  <button class="fab" id="newLetterBtn">✍️ Écrire</button>
+</section>
+
+<!-- ================= ÉDITEUR ================= -->
+<section id="screen-editor" class="screen">
+  <div class="editor-top">
+    <button class="btn ghost" style="width:auto;margin:0;" id="cancelBtn">← Retour</button>
+    <button class="btn" style="width:auto;margin:0;" id="saveBtn">Terminer ✉️</button>
+  </div>
+  <div class="sheet-wrap">
+    <div class="sheet" id="sheet">
+      <textarea id="letterText" placeholder="Chère amie, cher ami…&#10;&#10;Aujourd'hui…"></textarea>
+      <canvas id="drawCanvas"></canvas>
+    </div>
+    <div class="tools">
+      <button class="tool" id="writeTool">✍️ Écrire</button>
+      <button class="tool" id="drawTool">🎨 Dessiner</button>
+      <button class="tool" id="clearDrawTool">🧽 Effacer le dessin</button>
+      <button class="tool" id="photoTool">📷 Photo</button>
+    </div>
+    <input id="photoInput" type="file" accept="image/*" multiple class="hidden" />
+    <div class="photos-strip" id="photosStrip"></div>
+  </div>
+</section>
+
+<!-- ================= LECTURE ================= -->
+<section id="screen-reader" class="screen">
+  <div class="editor-top">
+    <button class="btn ghost" style="width:auto;margin:0;" id="backFromRead">← Ma boîte</button>
+    <button class="link" id="deleteLetterBtn" style="color:var(--rose);">Supprimer</button>
+  </div>
+  <div class="reader-wrap">
+    <div class="muted" id="readDate"></div>
+    <div class="sheet" style="margin-top:10px;">
+      <div class="read-text" id="readText"></div>
+      <img class="read-draw hidden" id="readDraw" alt="dessin" />
+    </div>
+    <div class="photos-strip" id="readPhotos"></div>
+  </div>
+</section>
+
+<script>
+/* ============================================================
+   Lettres pour l'été — logique du site
+   ------------------------------------------------------------
+   Pas de serveur : tout est enregistré dans le navigateur.
+   Chaque code a sa propre boîte à lettres.
+   ============================================================ */
+
+/* 1) LES CODES SECRETS (écrits en dur, faciles à modifier)
+      Ajoute autant de codes que tu veux, avec un nom pour chacun. */
+const CODES = {
+  "ete2026":  "Boîte de l'été",
+  "soleil":   "Boîte de Soleil",
+  "lettre":   "Boîte secrète",
+};
+
+const $ = (id) => document.getElementById(id);
+const screens = {
+  home:   $("screen-home"),
+  box:    $("screen-box"),
+  editor: $("screen-editor"),
+  reader: $("screen-reader"),
+};
+function show(name){
+  Object.values(screens).forEach(s => s.classList.remove("active"));
+  screens[name].classList.add("active");
+  window.scrollTo(0,0);
+}
+
+let currentCode = null;
+
+/* ---------- Stockage ---------- */
+function storageKey(code){ return "lettres_ete__" + code; }
+function loadLetters(code){
+  try { return JSON.parse(localStorage.getItem(storageKey(code))) || []; }
+  catch(e){ return []; }
+}
+function saveLetters(code, letters){
+  localStorage.setItem(storageKey(code), JSON.stringify(letters));
+}
+
+/* ---------- Accueil ---------- */
+$("enterBtn").addEventListener("click", tryEnter);
+$("codeInput").addEventListener("keydown", e => { if(e.key === "Enter") tryEnter(); });
+function tryEnter(){
+  const code = $("codeInput").value.trim().toLowerCase();
+  if(CODES[code]){
+    currentCode = code;
+    $("codeError").textContent = "";
+    $("codeInput").value = "";
+    openBox();
+  } else {
+    $("codeError").textContent = "Ce code ne correspond à aucune boîte…";
+  }
+}
+
+/* ---------- Boîte ---------- */
+$("logoutBtn").addEventListener("click", () => { currentCode = null; show("home"); });
+$("newLetterBtn").addEventListener("click", openEditor);
+
+function openBox(){
+  $("boxWho").textContent = CODES[currentCode];
+  renderPile();
+  show("box");
+}
+function renderPile(){
+  const letters = loadLetters(currentCode);
+  const pile = $("pile");
+  pile.innerHTML = "";
+  $("emptyBox").classList.toggle("hidden", letters.length > 0);
+  // les plus récentes en premier
+  letters.slice().reverse().forEach(letter => {
+    const env = document.createElement("div");
+    env.className = "envelope";
+    const title = (letter.text || "").trim().split("\n")[0].slice(0,24) || "Sans titre";
+    env.innerHTML = `
+      <div class="seal">🌻</div>
+      <div class="env-date">${letter.date}</div>
+      <div class="env-title">${escapeHtml(title)}</div>`;
+    env.addEventListener("click", () => openReader(letter.id));
+    pile.appendChild(env);
+  });
+}
+
+/* ---------- Éditeur ---------- */
+let draftPhotos = [];   // dataURLs
+let hasDrawing = false;
+
+$("cancelBtn").addEventListener("click", () => { if(confirm("Abandonner cette lettre ?")) openBox(); });
+$("saveBtn").addEventListener("click", saveLetter);
+$("writeTool").addEventListener("click", () => setDrawMode(false));
+$("drawTool").addEventListener("click", () => setDrawMode(true));
+$("clearDrawTool").addEventListener("click", clearDrawing);
+$("photoTool").addEventListener("click", () => $("photoInput").click());
+$("photoInput").addEventListener("change", handlePhotos);
+
+function openEditor(){
+  $("letterText").value = "";
+  draftPhotos = [];
+  hasDrawing = false;
+  $("photosStrip").innerHTML = "";
+  setDrawMode(false);
+  show("editor");
+  setTimeout(setupCanvas, 50);   // canvas dimensionné une fois visible
+}
+
+/* --- dessin --- */
+let ctx, drawing = false;
+function setupCanvas(){
+  const sheet = $("sheet");
+  const c = $("drawCanvas");
+  const w = sheet.clientWidth - 44;      // padding 22 x2
+  c.width = w; c.height = 300;
+  c.style.width = w + "px"; c.style.height = "300px";
+  ctx = c.getContext("2d");
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+  ctx.lineWidth = 3; ctx.strokeStyle = "#c96f4a";
+}
+function pos(e){
+  const r = $("drawCanvas").getBoundingClientRect();
+  const p = e.touches ? e.touches[0] : e;
+  return { x: p.clientX - r.left, y: p.clientY - r.top };
+}
+function startDraw(e){ drawing = true; const {x,y}=pos(e); ctx.beginPath(); ctx.moveTo(x,y); e.preventDefault(); }
+function moveDraw(e){ if(!drawing) return; const {x,y}=pos(e); ctx.lineTo(x,y); ctx.stroke(); hasDrawing=true; e.preventDefault(); }
+function endDraw(){ drawing = false; }
+["mousedown","touchstart"].forEach(ev => $("drawCanvas").addEventListener(ev, startDraw, {passive:false}));
+["mousemove","touchmove"].forEach(ev => $("drawCanvas").addEventListener(ev, moveDraw, {passive:false}));
+["mouseup","touchend","mouseleave"].forEach(ev => $("drawCanvas").addEventListener(ev, endDraw));
+
+function setDrawMode(on){
+  $("sheet").classList.toggle("drawing", on);
+  $("drawTool").classList.toggle("on", on);
+  $("writeTool").classList.toggle("on", !on);
+}
+function clearDrawing(){
+  if(ctx){ ctx.clearRect(0,0,$("drawCanvas").width,$("drawCanvas").height); hasDrawing=false; }
+}
+
+/* --- photos (redimensionnées pour rester légères) --- */
+function handlePhotos(e){
+  const files = [...e.target.files];
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => downscale(ev.target.result, data => {
+      draftPhotos.push(data);
+      renderDraftPhotos();
+    });
+    reader.readAsDataURL(file);
+  });
+  e.target.value = "";
+}
+function downscale(dataUrl, cb){
+  const img = new Image();
+  img.onload = () => {
+    const max = 700;
+    let {width:w, height:h} = img;
+    if(w > max || h > max){ const s = max/Math.max(w,h); w*=s; h*=s; }
+    const c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    c.getContext("2d").drawImage(img,0,0,w,h);
+    cb(c.toDataURL("image/jpeg", .8));
+  };
+  img.src = dataUrl;
+}
+function renderDraftPhotos(){
+  const strip = $("photosStrip");
+  strip.innerHTML = "";
+  draftPhotos.forEach((d,i) => {
+    strip.appendChild(polaroid(d, () => { draftPhotos.splice(i,1); renderDraftPhotos(); }));
+  });
+}
+function polaroid(dataUrl, onDelete){
+  const el = document.createElement("div");
+  el.className = "polaroid";
+  el.style.setProperty("--r", (Math.random()*8-4).toFixed(1) + "deg");
+  el.innerHTML = `<img src="${dataUrl}" alt="photo"><div class="cap">été 2026</div>`;
+  if(onDelete){
+    const del = document.createElement("button");
+    del.className = "del"; del.textContent = "×";
+    del.addEventListener("click", onDelete);
+    el.appendChild(del);
+  }
+  return el;
+}
+
+/* --- enregistrer --- */
+function saveLetter(){
+  const text = $("letterText").value.trim();
+  if(!text && !hasDrawing && draftPhotos.length === 0){
+    alert("Ta lettre est vide 🙂 Écris un mot, dessine ou ajoute une photo.");
+    return;
+  }
+  const letters = loadLetters(currentCode);
+  letters.push({
+    id: "L" + Date.now() + "_" + Math.floor(Math.random()*1e6),
+    date: formatDate(),
+    text,
+    drawing: hasDrawing ? $("drawCanvas").toDataURL("image/png") : null,
+    photos: draftPhotos.slice(),
+  });
+  try {
+    saveLetters(currentCode, letters);
+  } catch(err){
+    alert("Mémoire pleine 😢 Essaie avec moins de photos ou des photos plus petites.");
+    return;
+  }
+  openBox();
+}
+
+/* ---------- Lecture ---------- */
+let readingId = null;
+$("backFromRead").addEventListener("click", openBox);
+$("deleteLetterBtn").addEventListener("click", deleteLetter);
+
+function openReader(id){
+  const letter = loadLetters(currentCode).find(l => l.id === id);
+  if(!letter){ openBox(); return; }
+  readingId = id;
+  $("readDate").textContent = "Écrite le " + letter.date;
+  $("readText").textContent = letter.text || "";
+  const rd = $("readDraw");
+  if(letter.drawing){ rd.src = letter.drawing; rd.classList.remove("hidden"); }
+  else { rd.classList.add("hidden"); rd.removeAttribute("src"); }
+  const rp = $("readPhotos");
+  rp.innerHTML = "";
+  (letter.photos || []).forEach(d => rp.appendChild(polaroid(d, null)));
+  show("reader");
+}
+function deleteLetter(){
+  if(!confirm("Supprimer cette lettre pour toujours ?")) return;
+  const letters = loadLetters(currentCode).filter(l => l.id !== readingId);
+  saveLetters(currentCode, letters);
+  openBox();
+}
+
+/* ---------- utilitaires ---------- */
+function formatDate(){
+  // date sans dépendance au fuseau, format « 4 juillet 2026 »
+  const d = new Date();
+  const mois = ["janvier","février","mars","avril","mai","juin","juillet",
+                "août","septembre","octobre","novembre","décembre"];
+  return d.getDate() + " " + mois[d.getMonth()] + " " + d.getFullYear();
+}
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+</script>
+</body>
+</html>
