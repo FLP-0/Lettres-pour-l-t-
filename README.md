@@ -16,18 +16,29 @@ petites photos argentiques). Chaque lettre terminée rejoint la pile d'enveloppe
 
 ## Les codes secrets
 
-Les codes sont écrits **en dur** dans `index.html` (pas de serveur, tout reste simple).
-Pour les modifier, ouvre `index.html` et cherche la section `const CODES` :
+Les codes sont stockés **hachés** (empreinte SHA-256) dans `index.html`, jamais en
+clair — le mot de passe réel n'apparaît donc pas dans le code source. Chaque code a
+sa propre boîte.
+
+Codes de départ : `ete2026`, `soleil`, `lettre`.
+
+### Ajouter ou changer un code
+
+1. Ouvre le site, puis la **console du navigateur** (touche `F12`).
+2. Tape : `await hashCode("moncode")` et valide.
+3. Copie l'empreinte affichée.
+4. Dans `index.html`, section `const CODES`, ajoute une ligne :
 
 ```js
 const CODES = {
-  "ete2026":  "Boîte de l'été",
-  "soleil":   "Boîte de Soleil",
-  "lettre":   "Boîte secrète",
+  "empreinte_copiée_ici": "Nom de la boîte",
+  // …
 };
 ```
 
-Ajoute, retire ou renomme les codes comme tu veux. **Chaque code a sa propre boîte.**
+> ⚠️ Le hachage empêche de **lire** les codes dans le code source, mais un site
+> statique ne peut pas les garder totalement secrets (un mot de passe faible reste
+> devinable). Pour une vraie sécurité, il faudrait une fonction serveur — voir plus bas.
 
 ## Bon à savoir
 

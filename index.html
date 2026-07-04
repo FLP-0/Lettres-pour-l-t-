@@ -214,13 +214,33 @@
    Chaque code a sa propre boîte à lettres.
    ============================================================ */
 
-/* 1) LES CODES SECRETS (écrits en dur, faciles à modifier)
-      Ajoute autant de codes que tu veux, avec un nom pour chacun. */
+/* 1) LES CODES SECRETS — stockés HACHÉS (SHA-256), jamais en clair.
+      Ainsi le mot de passe réel n'apparaît pas dans le code source.
+
+      Pour AJOUTER un code : ouvre le site, puis la console du navigateur
+      (F12), et tape :   await hashCode("montnouveaucode")
+      Copie l'empreinte affichée et ajoute une ligne ci-dessous, avec le
+      nom de la boîte associée.
+
+      (Rappel : un site statique ne peut pas cacher totalement ses codes ;
+       le hachage empêche juste de les lire directement. Pour une vraie
+       sécurité, il faudra une fonction serveur — voir README.) */
 const CODES = {
-  "ete2026":  "Boîte de l'été",
-  "soleil":   "Boîte de Soleil",
-  "lettre":   "Boîte secrète",
+  // empreinte SHA-256                                              : nom de la boîte
+  "6a5c6d59b57c51081b808c99c0e4a550cab1d9280b1d1a22d91ccbde38de710e": "Boîte de l'été",   // ete2026
+  "e93e24c1b877a15df5e4a8cbb20f351b891b750779cf5e8fb99119a7142d89cf": "Boîte de Soleil",  // soleil
+  "1a48b8a28708bb7ea8f6eed9fdf6d2e5aa138961547ae28288980b3de50160fb": "Boîte secrète",    // lettre
 };
+
+/* Calcule l'empreinte SHA-256 d'un texte (utilisé pour vérifier les codes
+   et pour en générer de nouveaux via la console). */
+async function hashCode(text){
+  const data = new TextEncoder().encode(text.trim().toLowerCase());
+  const buf = await crypto.subtle.digest("SHA-256", data);
+  const hex = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,"0")).join("");
+  return hex;
+}
+window.hashCode = hashCode; // accessible depuis la console pour créer des codes
 
 const $ = (id) => document.getElementById(id);
 const screens = {
@@ -250,10 +270,12 @@ function saveLetters(code, letters){
 /* ---------- Accueil ---------- */
 $("enterBtn").addEventListener("click", tryEnter);
 $("codeInput").addEventListener("keydown", e => { if(e.key === "Enter") tryEnter(); });
-function tryEnter(){
-  const code = $("codeInput").value.trim().toLowerCase();
-  if(CODES[code]){
-    currentCode = code;
+async function tryEnter(){
+  const typed = $("codeInput").value.trim();
+  if(!typed){ return; }
+  const hash = await hashCode(typed);           // on compare l'empreinte, pas le mot
+  if(CODES[hash]){
+    currentCode = hash;                          // la boîte est identifiée par l'empreinte
     $("codeError").textContent = "";
     $("codeInput").value = "";
     openBox();
